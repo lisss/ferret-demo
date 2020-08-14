@@ -6,6 +6,11 @@
   display: flex;
   margin-top: 2rem;
 }
+@media screen and (max-width: 781px) {
+  .datePickerWrap {
+    flex-direction: column;
+  }
+}
 
 .datePickerInput {
   height: 2.5rem;
@@ -19,6 +24,12 @@
   box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
   color: #696969;
   font-size: 1rem;
+}
+
+@media screen and (max-width: 781px) {
+  .datePickerInput {
+    margin-bottom: 1rem;
+  }
 }
 
 .datePickerInput:hover {

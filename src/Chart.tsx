@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as d3 from 'd3';
-import './App.css';
+import './Chart.css';
 import DatePicker from 'react-datepicker';
 // @ts-ignore
 import data from './data/SalesJan2009.csv';
@@ -95,6 +95,33 @@ export const Chart = ({ width, height }: { width: number; height: number }) => {
       });
     }
   }, [salesDataRaw]);
+  function responsivefy(svg: any) {
+    // get container + svg aspect ratio
+    var container = d3.select(svg.node().parentNode),
+      width = parseInt(svg.style('width')),
+      height = parseInt(svg.style('height')),
+      aspect = width / height;
+
+    // add viewBox and preserveAspectRatio properties,
+    // and call resize so that svg resizes on inital page load
+    svg
+      .attr('viewBox', '0 0 ' + width + ' ' + height)
+      .attr('preserveAspectRatio', 'xMinYMid')
+      .call(resize);
+
+    // to register multiple listeners for same event type,
+    // you need to add namespace, i.e., 'click.foo'
+    // necessary if you call invoke this function for multiple svgs
+    // api docs: https://github.com/mbostock/d3/wiki/Selections#on
+    d3.select(window).on('resize.' + container.attr('id'), resize);
+
+    // get width of container and resize svg to fit it
+    function resize() {
+      var targetWidth = parseInt(container.style('width'));
+      svg.attr('width', targetWidth);
+      svg.attr('height', Math.round(targetWidth / aspect));
+    }
+  }
 
   useEffect(() => {
     const data = salesDataGrouped;
@@ -103,12 +130,17 @@ export const Chart = ({ width, height }: { width: number; height: number }) => {
     const pie = d3.pie<Sales>().value((d) => {
       return d.count;
     });
+    const margin = { top: 10, right: 25, bottom: 35, left: 25 };
 
     const slices = pie(data);
     const arc = d3.arc<any>().innerRadius(0).outerRadius(radius);
     const colors = ['#6baed6', '#fd8d3c', '#74c476', '#756bb1'];
     const color = d3.scaleOrdinal(colors);
-    const svg = d3.select(ref.current);
+    const svg = d3
+      .select(ref.current)
+      .attr('width', width - margin.left)
+      .attr('height', height + margin.top + margin.bottom)
+      .call(responsivefy);
     const g = svg
       .append('g')
       .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')')
@@ -140,14 +172,14 @@ export const Chart = ({ width, height }: { width: number; height: number }) => {
       .attr('fill', (d) => color(d.data.paymentSystem))
       .attr('font-size', '1rem')
       .attr('margin-bottom', '1rem')
-      .attr('y', (_, i) => 20 * (i + 1));
+      .attr('y', (_, i) => 30 * (i + 1));
   }, [salesDataGrouped]);
 
   return (
     <>
       <Header />
       <div className="chartWrap">
-        <svg ref={ref} {...{ width, height }} />
+        <svg ref={ref} />
       </div>
       <div className="datePickerWrap">
         <DatePicker
