@@ -1,0 +1,44 @@
+.chartWrap {
+  margin: 2rem;
+}
+
+.datePickerWrap {
+  display: flex;
+  margin-top: 2rem;
+}
+
+.datePickerInput {
+  height: 2.5rem;
+  border: none;
+  border-radius: 4px;
+  outline: none;
+  margin-right: 1rem;
+  display: flex;
+  text-align: center;
+  width: 16rem;
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
+  color: #696969;
+  font-size: 1rem;
+}
+
+.datePickerInput:hover {
+  cursor: pointer;
+}
+
+.react-datepicker__month-container {
+  width: 16rem;
+}
+
+.react-datepicker {
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  width: 16rem;
+  outline: none;
+  box-shadow: 0 4px 14px 0 rgb(232 232 232 / 39%);
+}
+.react-datepicker__triangle {
+  display: none;
+}
+
+.ssvg {
+  color: red;
+}
