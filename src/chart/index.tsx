@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as d3 from 'd3';
 import './Chart.css';
 import DatePicker from 'react-datepicker';
-import { Header } from './Header';
+import { Head } from './ChartHead';
 // @ts-ignore
 import data from './data/SalesJan2009.csv';
 
@@ -222,7 +222,7 @@ export const Chart = () => {
 
   return (
     <>
-      <Header />
+      <Head />
       <div className="chartWrap">
         <svg ref={ref} />
       </div>

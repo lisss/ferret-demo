@@ -1,6 +1,6 @@
 import React from 'react';
-import './Header.css';
+import './ChartHead.css';
 
-export const Header = () => (
+export const Head = () => (
   <div className="headWrap">Sales by payment system distribution</div>
 );

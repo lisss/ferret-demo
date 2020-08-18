@@ -1,0 +1,19 @@
+.header {
+  display: flex;
+  padding: 1.6rem;
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
+}
+
+.navItem {
+  margin-right: 1rem;
+  text-decoration: none;
+  color: #7d7c7c;
+}
+
+.active {
+  color: #1790d8 !important;
+}
+
+.navItem:hover {
+  color: #9e9c9c;
+}

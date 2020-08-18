@@ -1,13 +1,34 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import { Chart } from './Chart';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
+import { Chart } from './chart';
+import { TalkComments } from './talk';
+import { Header } from './header';
+import './index.css';
+import { Home } from './home';
 
 ReactDOM.render(
-  <div className="mainWrap">
-    <Chart />
-  </div>,
+  <Router>
+    <Header />
+    <Switch>
+      <Route exact path="/">
+        <div className="mainWrap">
+          <Home />
+        </div>
+      </Route>
+      <Route path="/chart">
+        <div className="mainWrap">
+          <Chart />
+        </div>
+      </Route>
+      <Route path="/comments">
+        <div className="mainWrap">
+          <TalkComments />
+        </div>
+      </Route>
+    </Switch>
+  </Router>,
   document.getElementById('root')
 );
 
