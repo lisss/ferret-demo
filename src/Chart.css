@@ -37,7 +37,6 @@ body {
   width: 16rem;
   box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
   color: #696969;
-  font-size: 1rem;
 }
 
 @media screen and (max-width: 781px) {
@@ -51,17 +50,24 @@ body {
 }
 
 .react-datepicker__month-container {
-  width: 16rem;
+  width: 16.2rem;
 }
 
 .react-datepicker {
   border: none !important;
-  width: 16rem;
   outline: none;
   box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
 }
 .react-datepicker__triangle {
   display: none;
+}
+
+.react-datepicker__day {
+  outline: none !important;
+}
+
+.react-datepicker__day--selected {
+  background-color: #6baed6 !important;
 }
 
 div.tooltip {
