@@ -2,11 +2,11 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as d3 from 'd3';
 import './Chart.css';
 import DatePicker from 'react-datepicker';
+import { Header } from './Header';
 // @ts-ignore
 import data from './data/SalesJan2009.csv';
 
 import 'react-datepicker/dist/react-datepicker.css';
-import { Header } from './Header';
 
 interface Order {
   [key: string]: string;
@@ -22,11 +22,61 @@ interface DateRange {
   endDate: Date | null;
 }
 
+const CHART_MARGIN = { top: 10, bottom: 35, left: 65 };
+const CHART_COLORS = ['#6baed6', '#fd8d3c', '#74c476', '#756bb1'];
+
 const mapdata = (data: d3.DSVRowArray<string>): Order[] => {
   return (data as unknown) as Order[];
 };
 
-export const Chart = ({ width, height }: { width: number; height: number }) => {
+const responsivefy = (
+  svg: d3.Selection<SVGSVGElement | null, unknown, null, undefined>
+) => {
+  // @FIXME: sort out typings
+  const container = d3.select(svg.node()!.parentNode as any);
+  const width = parseInt(svg.style('width'));
+  const height = parseInt(svg.style('height'));
+  const aspect = width / height;
+
+  // get width of container and resize svg to fit it
+  const resize = () => {
+    const targetWidth = parseInt(container.style('width')) - 100;
+    svg.attr('width', targetWidth);
+    svg.attr('height', Math.round(targetWidth / aspect));
+  };
+
+  // add viewBox and preserveAspectRatio properties,
+  // and call resize so that svg resizes on inital page load
+  svg
+    .attr('viewBox', '0 0 ' + width + ' ' + (height + 1))
+    .attr('preserveAspectRatio', 'xMinYMid')
+    .call(resize);
+
+  // to register multiple listeners for same event type,
+  // you need to add namespace, i.e., 'click.foo'
+  // necessary if you call invoke this function for multiple svgs
+  // api docs: https://github.com/mbostock/d3/wiki/Selections#on
+  d3.select(window).on('resize.' + container.attr('id'), resize);
+};
+
+const getLegendItemsTransformWidth = (i: number) =>
+  i
+    ? Array.from(Array(i).keys()).reduce((p, c) => {
+        return (
+          p +
+          d3
+            .select(`#label-${c}`)
+            .node()!
+            // @ts-ignore
+            .getBBox().width
+        );
+      }, 0) +
+      20 * (i % 4)
+    : 0;
+
+export const Chart = () => {
+  const width = window.innerWidth;
+  const height = 400;
   const ref = useRef<SVGSVGElement | null>(null);
 
   const [salesDataRaw, setSalesDataRaw] = useState<Order[]>([]);
@@ -95,63 +145,52 @@ export const Chart = ({ width, height }: { width: number; height: number }) => {
       });
     }
   }, [salesDataRaw]);
-  function responsivefy(svg: any) {
-    // get container + svg aspect ratio
-    var container = d3.select(svg.node().parentNode),
-      width = parseInt(svg.style('width')),
-      height = parseInt(svg.style('height')),
-      aspect = width / height;
-
-    // add viewBox and preserveAspectRatio properties,
-    // and call resize so that svg resizes on inital page load
-    svg
-      .attr('viewBox', '0 0 ' + width + ' ' + height)
-      .attr('preserveAspectRatio', 'xMinYMid')
-      .call(resize);
-
-    // to register multiple listeners for same event type,
-    // you need to add namespace, i.e., 'click.foo'
-    // necessary if you call invoke this function for multiple svgs
-    // api docs: https://github.com/mbostock/d3/wiki/Selections#on
-    d3.select(window).on('resize.' + container.attr('id'), resize);
-
-    // get width of container and resize svg to fit it
-    function resize() {
-      var targetWidth = parseInt(container.style('width'));
-      svg.attr('width', targetWidth);
-      svg.attr('height', Math.round(targetWidth / aspect));
-    }
-  }
 
   useEffect(() => {
     const data = salesDataGrouped;
     const radius = Math.min(width, height) / 2;
 
-    const pie = d3.pie<Sales>().value((d) => {
-      return d.count;
-    });
-    const margin = { top: 10, right: 25, bottom: 35, left: 25 };
+    const pie = d3.pie<Sales>().value((d) => d.count);
 
     const slices = pie(data);
     const arc = d3.arc<any>().innerRadius(0).outerRadius(radius);
-    const colors = ['#6baed6', '#fd8d3c', '#74c476', '#756bb1'];
-    const color = d3.scaleOrdinal(colors);
+
+    const color = d3.scaleOrdinal(CHART_COLORS);
+
     const svg = d3
       .select(ref.current)
-      .attr('width', width - margin.left)
-      .attr('height', height + margin.top + margin.bottom)
+      .attr('width', width)
+      .attr('height', height + CHART_MARGIN.bottom)
       .call(responsivefy);
     const g = svg
       .append('g')
-      .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')')
-      .attr('class', 'ssvg');
+      .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
     const arcGraph = g.selectAll('path.slice').data(slices).enter();
+
+    const tooltip = d3
+      .select('body')
+      .data(slices)
+      .enter()
+      .append('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0);
+
     arcGraph
       .append('path')
       .attr('class', 'slice')
       .attr('d', arc)
-      .attr('fill', (d) => color(d.data.paymentSystem));
+      .attr('fill', (d) => color(d.data.paymentSystem))
+      .on('mouseover', (d) => {
+        tooltip.transition().duration(200).style('opacity', 0.5);
+        tooltip
+          .html(d.data.paymentSystem)
+          .style('left', d3.event.pageX + 'px')
+          .style('top', d3.event.pageY - 28 + 'px');
+      })
+      .on('mouseout', () =>
+        tooltip.transition().duration(500).style('opacity', 0)
+      );
 
     arcGraph
       .append('text')
@@ -164,15 +203,21 @@ export const Chart = ({ width, height }: { width: number; height: number }) => {
     svg
       .append('g')
       .attr('class', 'legend')
+      .attr('transform', () => 'translate(' + (width / 2 - radius) + ')')
       .selectAll('text')
       .data(slices)
       .enter()
       .append('text')
-      .text((d) => '• ' + d.data.paymentSystem)
+      .text((d) => d.data.paymentSystem)
       .attr('fill', (d) => color(d.data.paymentSystem))
-      .attr('font-size', '1rem')
+      .attr('font-size', '1.2rem')
       .attr('margin-bottom', '1rem')
-      .attr('y', (_, i) => 30 * (i + 1));
+      .attr('y', (_, i) => height + CHART_MARGIN.bottom)
+      .attr('id', (_, i) => `label-${i}`)
+      .attr(
+        'transform',
+        (_, i) => 'translate(' + getLegendItemsTransformWidth(i) + ')'
+      );
   }, [salesDataGrouped]);
 
   return (

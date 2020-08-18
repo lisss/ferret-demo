@@ -6,7 +6,7 @@ import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <div className="mainWrap">
-    <Chart width={window.innerWidth} height={300} />
+    <Chart />
   </div>,
   document.getElementById('root')
 );

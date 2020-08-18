@@ -1,6 +1,13 @@
 .headWrap {
   font-size: 2rem;
   color: #6baed6;
-  margin-bottom: 2rem;
+  margin: 0 1rem 2rem;
   text-align: center;
+}
+
+@media screen and (max-width: 781px) {
+  .headWrap {
+    margin: 0;
+    font-size: 1.6rem;
+  }
 }
