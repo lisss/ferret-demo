@@ -1,0 +1,8 @@
+{
+  "server": [
+    "talk-plugin-dislike"
+  ],
+  "client": [
+    "talk-plugin-dislike"
+  ]
+}

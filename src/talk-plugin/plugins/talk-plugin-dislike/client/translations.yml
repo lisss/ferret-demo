@@ -1,0 +1,52 @@
+ar:
+  talk-plugin-dislike:
+    dislike: أعجبني
+    disliked: إعجاب
+da:
+  talk-plugin-dislike:
+    dislike: Like
+    disliked: Liked
+de:
+  talk-plugin-dislike:
+    dislike: Gefällt mir
+    disliked: Gefällt mir
+en:
+  talk-plugin-dislike:
+    dislike: Dislike
+    disliked: Disliked
+es:
+  talk-plugin-dislike:
+    dislike: Me Gusta
+    disliked: Me Gustó
+fr:
+  talk-plugin-dislike:
+    dislike: Like
+    disliked: Liked
+he:
+  talk-plugin-dislike:
+    dislike: לייק
+    disliked: לייקד
+it:
+  talk-plugin-dislike:
+    dislike: Mi piace
+    disliked: Piaciuto
+nl_NL:
+  talk-plugin-dislike:
+    dislike: Like
+    disliked: Liked
+pt_BR:
+  talk-plugin-dislike:
+    dislike: Like
+    disliked: Liked
+sr:
+  talk-plugin-dislike:
+    dislike: Sviđa mi se
+    disliked: Sviđa vam se
+zh_CN:
+  talk-plugin-dislike:
+    dislike: "喜欢"
+    disliked: "已喜欢"
+zh_TW:
+  talk-plugin-dislike:
+    dislike: 喜歡
+    disliked: 已喜歡
