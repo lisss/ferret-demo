@@ -61,16 +61,16 @@ const responsivefy = (
 
 const getLegendItemsTransformWidth = (i: number) =>
   i
-    ? Array.from(Array(i).keys()).reduce((p, c) => {
-        return (
+    ? Array.from(Array(i).keys()).reduce(
+        (p, c) =>
           p +
           d3
             .select(`#label-${c}`)
             .node()!
             // @ts-ignore
-            .getBBox().width
-        );
-      }, 0) +
+            .getBBox().width,
+        0
+      ) +
       20 * (i % 4)
     : 0;
 
@@ -152,7 +152,9 @@ export const Chart = () => {
 
     const pie = d3.pie<Sales>().value((d) => d.count);
 
-    const slices = pie(data);
+    const slices = pie(
+      data.sort((a, b) => a.paymentSystem.localeCompare(b.paymentSystem))
+    );
     const arc = d3.arc<any>().innerRadius(0).outerRadius(radius);
 
     const color = d3.scaleOrdinal(CHART_COLORS);
@@ -162,11 +164,6 @@ export const Chart = () => {
       .attr('width', width)
       .attr('height', height + CHART_MARGIN.bottom)
       .call(responsivefy);
-    const g = svg
-      .append('g')
-      .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
-
-    const arcGraph = g.selectAll('path.slice').data(slices).enter();
 
     const tooltip = d3
       .select('body')
@@ -175,6 +172,14 @@ export const Chart = () => {
       .append('div')
       .attr('class', 'tooltip')
       .style('opacity', 0);
+
+    svg.selectAll('*').remove();
+
+    const g = svg
+      .append('g')
+      .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+
+    const arcGraph = g.selectAll('path.slice').data(slices).enter();
 
     arcGraph
       .append('path')
